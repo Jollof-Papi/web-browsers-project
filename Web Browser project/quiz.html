@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Web Browser Quiz</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { width: 80%; max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 5px; }
+    h1 { text-align: center; }
+    button { display: block; margin: 20px auto; padding: 10px 20px; }
+    .result { background: #e2e2e2; padding: 10px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Web Browser Self-Assessment Quiz</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="future_security.html">Future & Security</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <form name="quizForm" id="quizForm">
+      <!-- Q1 -->
+      <p>1. Who created the first web browser?</p>
+      <input type="radio" name="q1" value="0"> Marc Andreessen<br>
+      <input type="radio" name="q1" value="1"> Tim Berners-Lee<br>
+      <input type="radio" name="q1" value="0"> Eric Bina<br>
+      <input type="radio" name="q1" value="0"> Larry Page<br>
+
+      <!-- Q2 -->
+      <p>2. Which browser introduced tabbed browsing as a standard feature?</p>
+      <input type="radio" name="q2" value="0"> Internet Explorer<br>
+      <input type="radio" name="q2" value="0"> Mosaic<br>
+      <input type="radio" name="q2" value="1"> Firefox<br>
+      <input type="radio" name="q2" value="0"> Safari<br>
+
+      <!-- Q3 -->
+      <p>3. Which browser uses the V8 JavaScript engine?</p>
+      <input type="radio" name="q3" value="0"> Safari<br>
+      <input type="radio" name="q3" value="0"> Firefox<br>
+      <input type="radio" name="q3" value="1"> Chrome<br>
+      <input type="radio" name="q3" value="0"> Netscape<br>
+
+      <!-- Q4 -->
+      <p>4. Fill in the blank: The first browser with both text and graphics was called _______.</p>
+      <input type="text" name="q4">
+
+      <!-- Q5 -->
+      <p>5. Which of these are rendering engines used in modern browsers? (Select all that apply)</p>
+      <input type="checkbox" name="q5" value="Gecko"> Gecko<br>
+      <input type="checkbox" name="q5" value="ActiveX"> ActiveX<br>
+      <input type="checkbox" name="q5" value="Blink"> Blink<br>
+      <input type="checkbox" name="q5" value="WebKit"> WebKit<br>
+
+      <button type="button" onclick="gradeQuiz()">Submit Quiz</button>
+      <button type="reset">Restart Quiz</button>
+    </form>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <footer>
+    <p>This is a class project for <a href="https://ksuweb.github.io/IT3203/">IT 3203 Web Development</a></p>
+  </footer>
+
+  <script>
+    // Grade quiz function
+    function gradeQuiz() {
+      let score = 0;
+      let total = 5;
+
+      // Q1-Q3 grading
+      for (let i = 1; i <= 3; i++) {
+        let q = document.querySelector(`input[name="q${i}"]:checked`);
+        if (q) score += parseInt(q.value);
+      }
+
+      // Q4 grading
+      let q4 = document.quizForm.q4.value.trim().toLowerCase();
+      if (q4 === "mosaic") score += 1;
+
+      // Q5 - multiple correct with partial scoring
+      let q5correct = ["Gecko", "Blink", "WebKit"];
+      let q5checked = Array.from(document.querySelectorAll('input[name="q5"]:checked')).map(cb => cb.value);
+      let q5score = 0;
+      q5checked.forEach(ans => {
+        if (q5correct.includes(ans)) q5score += 0.33; // each correct worth ~0.33
+        else q5score -= 0.33; // subtract if wrong selected
+      });
+      if (q5score < 0) q5score = 0;
+      if (q5score > 1) q5score = 1;
+      score += q5score;
+
+      // Calculate percentage
+      let percent = (score / total) * 100;
+
+      // Pass/fail
+      let pass = percent >= 70 ? "PASS" : "FAIL";
+
+      // Display results
+      document.getElementById("result").innerHTML = `
+        <h3>Results:</h3>
+        <p>Total Score: ${score.toFixed(2)} / ${total}</p>
+        <p>Percentage: ${percent.toFixed(2)}%</p>
+        <p>Overall Result: <strong>${pass}</strong></p>
+        <p>Correct Answers:<br>
+        Q1: Tim Berners-Lee<br>
+        Q2: Firefox<br>
+        Q3: Chrome<br>
+        Q4: Mosaic<br>
+        Q5: Gecko, Blink, WebKit</p>
+      `;
+    }
+  </script>
+</body>
+</html>
